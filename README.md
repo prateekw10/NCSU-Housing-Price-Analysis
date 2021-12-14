@@ -1,4 +1,4 @@
-# NCSU-Housing-Price-Analysis
+# Housing Price Analysis
 
 ### Summary
 
