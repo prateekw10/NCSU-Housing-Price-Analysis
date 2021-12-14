@@ -1,21 +1,77 @@
 # NCSU-Housing-Price-Analysis
-Analyzing housing prices based on real estate data
 
-Following factors are considered for the data analysis to predict house Sale Price:
-LotFrontage, LotArea, LotShape, LotConfig, Neighborhood, BldgType, HouseStyle, OverallQual, OverallCond, YearBuilt, YearRemodAdd, Exterior1st, Foundation, BsmtFinType1, TotalBsmtSF, GrLivArea, FullBath, HalfBath, BedroomAbvGr, KitchenQual, TotRmsAbvGrd, Fireplaces, GarageType, GarageCars, YrSold
+### Summary
 
-Data-Preprocessing and Subset Selection is performed on the data to obtain a good dataset for analysis
+This project examines the relationship between various attributes of houses and their sale price. Five years of historical data prior to the housing crisis at the end of the 2000s was provided to test the impact a range of predictors have on housing prices. 
+Following the utilization of data pre-processing and subset selection, nine prediction models were created and their respective Mean Squared Error (MSE) were calculated. The Lasso Regression model provides the best fit for the given housing data. It was selected as a good predictive model because it produced the lowest MSE (MSE = 422718822). Using this model it was found that the five (5) strongest predictors of housing price are the exterior covering on the house, the neighborhood it is located in, kitchen quality, building type, and the year it was built. These are the predictors that would be used in future work with the realtor association. 
 
-Following models are implmented on the data:
-1) Least Squares Model
-2) Ridge Regression
-3) Lasso Regression
-4) Regression Tree
-5) Bagging
-6) Random Forest
-7) Graident Boosing
-8) Principal Component Analysis
+### Introduction
 
-Lasso Regression is identified to function effectively on the given data by analyzing least Mean Square Errors
+The realtor association of Ames, Iowa is interested in determining the factors that affected housing prices before the housing price crash at the end of the 2000s and determine if there are any differences between this and the factors affecting  housing prices today. The objective of this project is to create a comprehensive predictive model using historical housing data from the 2000s.
+The secondary objective is to identify attributes with the highest impact on the housing prices as well as the quantitative relation that binds them.
+
+Before performing the analysis, we performed extensive data cleaning. Subset selection was then used to get a more precise data set, and eliminate predictors that were less useful for our model. These methods were thoroughly validated to ensure an accurate prediction model. We performed the analysis on the data subset, and included Ordinary Least Squares Regression, Ridge and Lasso Regressions, Regression Tree, Bagging Method, Random Forest,  PCR, and Gradient Boosting in our assessment. The MSE for each model was calculated and compared to identify the best method to predict house prices.
+
+### Data
+
+To create a predictive model for housing price changes, historical housing data was utilized. The housing data used spans 5 years (2006-2010) and consists of 1,437 observations containing twenty-six (26) variables. Fourteen (14) of these variables are numerical, while the other twelve (12) are categorical. Before analyzing the data, it is pre-processed to convert categorical variables to binary variables and to impute any incomplete observations. This resulted in a dataset consisting of ninety (90) variables. Following these steps, subset selection was employed to select the thirty-five (35) most influential variables. The data was then scaled and the Sales Price variable was transformed logarithmically to acquire a more even distribution. After the subsets have been selected, the data is split into a training set and a test set. The training set consists of 80% of the data set (1150 observations) and is used for the analysis. The test set consists of the other 20% of the data set (287 observations) and is used to test the accuracy of each model.
+
+### Methods
+
+#### Data Pre-Processing
+Before beginning the data analysis, the data was cleaned to be able to run the model over the full set and not be impacted by incomplete records. First, missing values in any observations were imputed.  For categorical variables, the mode value was used to replace a missing value. For the given continuous variable that has missing values, a box whisker plot was used, which gave a better visualization of the spread of the predictor data. It is derived that there aren't many outliers present in the data, so the mean can be used to replace the missing values. Additionally, the mean and median for the given continuous predictor are the same. Three variables indicate a specific year to represent their value which is converted into continuous variables by subtracting the earliest year of the specific predictor to make the model more interpretable.
+Then, the data was scaled so that all continuous variables would be on a similar scale for visualization purposes. Categorical variables were converted into binary variables so they can be quantitatively analyzed. Finally, a dummy matrix was formed to record the mean squared error of each model to help better understand the performance of the models.
+
+#### Subset Selection
+Prior to data pre-processing, the dataset included 90 variables. Since this is a large dataset, subset selection was employed to condense the dataset into the most relevant predictors.  The forward subset selection method was selected because it is an efficient selection method when dealing with large amounts of data, such as the housing data set. Using the forward approach, criteria were calculated to select the optimal number of predictors.  The Akaike information criterion (AIC), Bayesian information criterion (BIC), and adjusted R-squared values were plotted to allow for visual confirmation of the best number of predictors. From this process, the best AIC selection indicates forty-seven (47) predictors, the best BIC indicates thirty-six (36) predictors, and the best-adjusted R squared indicates sixty-three (63) predictors. Ultimately, the model with thirty-six (36) predictors was chosen because it has the lowest BIC value. The BIC indicates the truest predictor model, and since the stakeholders are most interested in an accurate prediction, this was the optimum decision metric. To validate this model selection, summary plots were produced. Additionally, the Variance Inflation Factors of these predictors were calculated. The VIF values indicate collinearity, and in practice, a VIF between 1 and 5 is ideal. A lower VIF value signals that this is a more independent predictor, and since they are almost all close to 1, with only one exception of a VIF over 5, we can conclude that this subset is a good estimate of the entire data set.
+
+#### Ordinary Least Squares (OLS)
+Following the data preprocessing and subset selection, we created a test and train data set, as explained above.  For the ordinary least squares (OLS) method, the training data is fitted to test the interactions with Sales Price using a complete additive fit model.  The ordinary least squares method is easily interpretable which warrants its use in the project, but it does have computational limitations not experienced in other models.  To validate, the VIFs were computed and found to be low and within the 1-5 threshold commonly used in practice, with only one exception. This proves that there is low collinearity, and this model can be considered.
+
+#### Ridge Regression 
+The Ridge Regression method was used in the analysis to examine any possibilities of multicollinearity. Ridge regression has a bias-variance trade-off, giving it an advantage over the least-squares method. As the value of lambda increases, the flexibility of the fit decreases, decreasing the variance. Ridge regression is superior to the best subset selection method in terms of computational feasibility because the ridge regression only fits a single model for the unique value of lambda. To validate these results, predictor coefficients as a function of lambda were graphed and verified to “shrink” towards 0. Additionally, the MSE as a function of lambda was graphed to verify the minimum lambda value and indicate the optimal MSE value. Finally, the predictions were compared to OLS predictions and showed similar R-squared values. 
 
 
+#### Lasso Regression
+Lasso regression was analyzed to compare to Ridge regression results. The two methods are similar, but instead of choosing a model that includes all predictors as ridge does, lasso only uses a subset as it moves the coefficients of certain variables to zero. A range of lambda values is used to plot how the coefficients change as the lambda value increases. Then the lambda value is optimized using cross-validation, and the coefficients for the optimal model are compared to the coefficients found in the OLS model. The fitted values are plotted against the actual values from the OLS and original models, and finally, the MSE is calculated.  First, the coefficient estimates can be seen approaching and reaching 0 during variable selection. Next, the MSE as a function of lambda was graphed to verify the minimum lambda value and indicate the optimal MSE value. Finally, the Lasso predictions were compared to OLS and found to have similar R-squared values.
+
+
+#### Regression Tree
+The regression tree uses binary recursive partitioning, which splits the data into branches using certain criteria. The algorithm requires selecting the split that minimizes the sum of squared deviations from the mean and then the process is repeated until each node becomes a terminal node. Regression tree was generated as a model to predict continuous variables but has a very high MSE. The tree was optimized by pruning and selecting the number of nodes with Cp lower than the standard deviation line. When compared and plotted with the linear model we see that the predictions provided by the tree are clubbed together; this is due to the tree giving a prediction from one of the 7 nodes that it generated.  To solve that problem the Bootstrap Aggregation (Bagging) Method is used in the subsequent step.
+
+The regression tree method is prone to overfitting the data which leads to poor predictions on real-life data; hence it is “pruned” to identify the tree that best validates the data with the lowest total terminal node variance. The regression tree method allows us to find the best predictor values by using ensemble methods, combining multiple weak regression tree models to form a new accurate regression tree model. 
+
+#### Bootstrap Aggregation (Bagging) Method
+The bagging method uses a process similar to fit variables and their influence on Sale Price, and then the model is compared to the OLS method.  We performed this method to get rid of the overfitting generated by the single regression tree but to generate an aggregate of multiple tree predictions. When bagging with decision trees, we are less concerned about individual trees overfitting the training data. The only parameters when using bagging  is the number of samples and hence the number of trees to include. This can be chosen by increasing the number of trees during each iteration until the accuracy stops improving i.e. when the graph gets flat. We compared the bagging prediction with the linear model and it improves the single regression tree model considerably which is visible with the significantly lower MSE.
+
+#### Random Forest Method
+The random forest method is a variation of the regression tree method, in which multiple weak regression trees are trained using a fixed number of randomly selected features. The method then takes the average value of the weak learners and assigns them to a strong predictor. The random tree performance is faster than bagging because it selects a limited number of features in each iteration which significantly improves the computational time.
+
+A grid-search is performed on all 35 variables which indicates a set of 25 predictors to have the lowest MSE.  When implementing the Random Forest algorithm, a combination of 25 variables was employed to generate the optimal model. The plot comparing the linear regression model to Random Forest indicates that the predictions of both the models are very similar due to the significant overlap in prediction points. Random Forest also identifies variables that contribute most to the MSE.
+
+#### Gradient Boosting
+Gradient Boosting is used to improve the predictions made by the random forest methodology. The model gradually learns predicted values by iteratively fitting new trees to the difference in actual and predicted values from previous iterations and using weighted residuals in future iterations. We use four tuning parameters, and obtain the optimal parameters by training the model on the given grid of hyperparameters and using the parameter combination with the minimum MSE. We obtain the following values for our hyperparameters in the gradient boosting model: shrinkage = 0.1, depth=5, trees = 1000, minobsinnode = 3.
+We use these parameters to generate an optimal model and derive our predictions of the test data.
+
+Gradient Boosting also provides the importance of each variable in its influence on the MSE. From this graph, it is shown that the OverallQual variable has the most influence on MSE. Furthermore, this method is validated by comparing the test predictions to the OLS model which displays a considerable amount of overlap between the predicted points.
+
+#### Principal Component Analysis (PCA)
+The principal component analysis method is a mathematical procedure that uses dimensionality reduction to improve the accuracy and reliability of a prediction model. It works on the principle of eliminating variables that do not considerably contribute to the accuracy of the model but rather reduce the interpretability of the model due to the presence of a large number of predictors. PCA transforms a number of potentially correlated variables into a smaller number of uncorrelated variables called principal components. The first principal component accounts for the majority of the variability in the data, and the other components account for the remaining variability in a decreasing order of magnitude.
+
+We perform our component analysis on the training data set and derive the corresponding eigenvalues, eigenvectors for the corresponding dataset. After building a model using our PCA methodology on our subset data, we obtain 35 principal components which are linear combinations of the original features such that the variability of the original features is divided amongst the principal components. After analyzing the scree plot that plots the mean square error vs the number of components used to predict the data, we can conclude that the first 5 principal components explain most of the variance in the data (87%). Therefore, we use the first 5 principal components in our model to make predictions.
+
+#### Results
+
+The model chosen to select the greatest predictors of housing price was Lasso Regression because it produces the lowest mean squared error of 422718822.
+The Lasso Model produces an R-squared value of 91.48%, meaning that the model explains 91.48% of the variance of the data. It also produces a more interpretable model compared to the others in consideration as it uses fewer variables to predict the data.
+Additionally, Lasso identifies the five (5) most influential variables to MSE. These variables are the type of exterior covering on the house, the neighborhood it is located in, the quality of the kitchen, building type, and the year it was built.
+The next lowest mean squared error was produced by the ridge regression model. Ridge regression uses all possible predictors, making it computationally expensive, while Lasso uses only a subset. Lasso also has some limitations. For example, if there are highly collinear variables then lasso regression selects one of them randomly. This hinders the interpretation of data. Additionally, predictors are dropped if their coefficients are shrunk to zero. As an alternative, Ridge Regression is a good model because the entire dataset is not exponentially larger compared to our subset used by the lasso model.
+
+<!--<img src="https://user-images.githubusercontent.com/22122136/145949654-a765a9da-a885-4163-9e1d-637acc3271ba.png" width="250" height="110">-->
+
+#### Conclusion
+
+The Lasso model was selected because it had the lowest MSE of the 9 models. Additionally, from the R-squared value, it is observed that the Lasso model explains 91.48% of the variance of the data. Furthermore, Lasso identified the 5 most influential predictors of sale price: the exterior covering on the house, the neighborhood it is located in, kitchen quality, building type, and the year it was built.  This is valuable information because these factors will make the most impact on the sale price of a home. It can be used to identify what improvements could be made to increase the sale price of a house, or to estimate the sale price of a house. 
+
+Our analysis results are limited due to the methods used in data preprocessing. Notably, assumptions had to be made to impute missing values using either mean (continuous variables) or mode (categorical variables) values.  These imputation methods can be affected by outliers.
+In the future, current housing data can be analyzed to examine the differences between influencing factors of the sale price. This can help understand the current housing market, and ensure valid predictions of the future of house prices.
